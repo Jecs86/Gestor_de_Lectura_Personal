@@ -1,0 +1,19 @@
+package com.appstudio.gestordelecturapersonal.data.local.dao
+
+import androidx.room.*
+import com.appstudio.gestordelecturapersonal.data.local.entity.NoteEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface NoteDao {
+
+    @Query("""
+        SELECT * FROM notes
+        WHERE bookId = :bookId AND estaEliminado = 0
+        ORDER BY fechaActualizacion DESC
+    """)
+    fun obtenerNotas(bookId: Long): Flow<List<NoteEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertar(note: NoteEntity)
+}
