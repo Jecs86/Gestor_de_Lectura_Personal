@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.appstudio.gestordelecturapersonal"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.appstudio.gestordelecturapersonal"
