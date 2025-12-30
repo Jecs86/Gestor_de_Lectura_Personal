@@ -14,6 +14,7 @@ kotlinxCoroutines = "1.8.1"
 navigationCompose = "2.8.2"
 datastore = "1.1.1"
 ksp = "2.0.21-1.0.27"
+composeMaterialIcons = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,9 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 # DataStore
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+# Iconos extendidos de Material Design
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "composeMaterialIcons" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
