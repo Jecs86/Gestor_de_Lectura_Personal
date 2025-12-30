@@ -8,9 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+
 @Composable
 fun SettingsContent(
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onLogoutClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -22,11 +24,15 @@ fun SettingsContent(
         SettingsSection(title = "Cuenta") {
             SettingsItem(
                 title = "Editar perfil",
-                subtitle = "Nombre, foto, correo"
+                subtitle = "Nombre, foto, correo",
+                onClick = { /* navegar a perfil */ }
             )
+
             SettingsItem(
                 title = "Cerrar sesión",
-                subtitle = "Salir de la aplicación"
+                subtitle = "Salir de la aplicación",
+                onClick = onLogoutClick,
+                isDestructive = true
             )
         }
 

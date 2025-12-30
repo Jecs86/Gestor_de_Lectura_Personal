@@ -4,19 +4,34 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
+import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun SettingsScreen(
-    navController: NavController
+    navController: NavController,
+    onLogoutSuccess: () -> Unit
 ) {
+    val viewModel: SettingsViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState.isLoggedOut) {
+        if (uiState.isLoggedOut) {
+            onLogoutSuccess()
+        }
+    }
+
     Scaffold(
         topBar = {
             SettingsTopBar()
         },
-        bottomBar = { AppBottomBar(navController)}
+        bottomBar = {
+            AppBottomBar(navController)
+        }
     ) { paddingValues ->
         SettingsContent(
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            onLogoutClick = viewModel::logout
         )
     }
 }

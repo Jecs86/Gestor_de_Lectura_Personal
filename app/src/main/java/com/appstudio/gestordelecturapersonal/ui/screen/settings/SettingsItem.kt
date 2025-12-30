@@ -10,27 +10,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+
 @Composable
 fun SettingsItem(
     title: String,
     subtitle: String,
-    onClick: () -> Unit = {}
+    onClick: (() -> Unit)? = null,
+    isDestructive: Boolean = false
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable(enabled = onClick != null) {
+                onClick?.invoke()
+            }
             .padding(vertical = 12.dp)
     ) {
-
         Text(
             text = title,
+            color = if (isDestructive) MaterialTheme.colorScheme.error
+            else MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyLarge
         )
-
         Text(
             text = subtitle,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
