@@ -13,11 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.appstudio.gestordelecturapersonal.ui.navigation.AppNavHost
 import com.appstudio.gestordelecturapersonal.ui.theme.GestorDeLecturaPersonalTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        FirebaseApp.initializeApp(this)
+
         setContent {
             GestorDeLecturaPersonalTheme {
                 AppNavHost()

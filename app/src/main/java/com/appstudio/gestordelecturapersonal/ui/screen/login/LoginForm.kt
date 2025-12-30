@@ -11,20 +11,21 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginForm(
+    email: String,
+    password: String,
+    isLoading: Boolean,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
+    onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit
 ) {
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -32,34 +33,46 @@ fun LoginForm(
     ) {
 
         OutlinedTextField(
-            value = email.value,
-            onValueChange = { email.value = it },
+            value = email,
+            onValueChange = onEmailChange,
             label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
-            value = password.value,
-            onValueChange = { password.value = it },
+            value = password,
+            onValueChange = onPasswordChange,
             label = { Text("Contraseña") },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = onLoginClick,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         ) {
             Text("Iniciar sesión")
         }
 
+        Button(
+            onClick = onRegisterClick,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
+        ) {
+            Text("Registrarse")
+        }
+
         TextButton(
             onClick = onForgotPasswordClick,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !isLoading
         ) {
             Text(
                 text = "¿Olvidaste tu contraseña?",
