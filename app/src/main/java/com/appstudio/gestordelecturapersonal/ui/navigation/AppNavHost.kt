@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.appstudio.gestordelecturapersonal.ui.screen.login.LoginScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.books.BooksScreen
+import com.appstudio.gestordelecturapersonal.ui.screen.register.RegisterScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.settings.SettingsScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.statistics.StatisticsScreen
 
@@ -19,32 +20,51 @@ fun AppNavHost(
         startDestination = AppRoutes.Login.route
     ) {
 
+        // ---------- LOGIN ----------
         composable(AppRoutes.Login.route) {
             LoginScreen(
-                onLoginClick = {
+                navController = navController,
+                onLoginSuccess = {
                     navController.navigate(AppRoutes.Books.route) {
-                        popUpTo(AppRoutes.Login.route) { inclusive = true }
+                        popUpTo(AppRoutes.Login.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
                     }
-                },
-                onRegisterClick = {
-                    // FUTURO
-                },
-                onForgotPasswordClick = {
-                    // FUTURO
                 }
             )
         }
 
+        // ---------- REGISTER ----------
+        composable(AppRoutes.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ---------- BOOKS ----------
         composable(AppRoutes.Books.route) {
-            BooksScreen(navController)
+            BooksScreen(navController = navController)
         }
 
+        // ---------- STATISTICS ----------
         composable(AppRoutes.Statistics.route) {
-            StatisticsScreen(navController)
+            StatisticsScreen(navController = navController)
         }
 
+        // ---------- SETTINGS ----------
         composable(AppRoutes.Settings.route) {
-            SettingsScreen(navController)
+            SettingsScreen(
+                navController = navController,
+                onLogoutSuccess = {
+                    navController.navigate(AppRoutes.Login.route) {
+                        popUpTo(0)
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }
