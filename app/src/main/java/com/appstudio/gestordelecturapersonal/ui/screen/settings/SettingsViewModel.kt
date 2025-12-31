@@ -9,7 +9,9 @@ class SettingsViewModel : ViewModel() {
 
     private val auth = FirebaseAuth.getInstance()
 
-    private val _uiState = MutableStateFlow(SettingsUiState())
+    private val _uiState = MutableStateFlow(
+        SettingsUiState(email = auth.currentUser?.email)
+    )
     val uiState: StateFlow<SettingsUiState> = _uiState
 
     fun logout() {

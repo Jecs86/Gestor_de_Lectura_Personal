@@ -28,7 +28,9 @@ fun LoginContent(
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
-    onGoogleLoginClick: () -> Unit
+    onGoogleLoginClick: () -> Unit,
+    showResendVerification: Boolean,
+    onResendVerificationClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -47,7 +49,9 @@ fun LoginContent(
             onPasswordChange = onPasswordChange,
             onLoginClick = onLoginClick,
             onRegisterClick = onRegisterClick,
-            onForgotPasswordClick = onForgotPasswordClick
+            onForgotPasswordClick = onForgotPasswordClick,
+            onResendVerificationClick = onResendVerificationClick,
+            showResendVerification = showResendVerification
         )
 
         Spacer(modifier = Modifier.height(16.dp))

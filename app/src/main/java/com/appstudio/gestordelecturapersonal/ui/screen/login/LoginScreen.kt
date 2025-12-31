@@ -60,6 +60,8 @@ fun LoginScreen(
                 password = uiState.password,
                 isLoading = uiState.isLoading,
                 errorMessage = uiState.errorMessage,
+                showResendVerification = uiState.showResendVerification,
+                onResendVerificationClick = viewModel::resendVerificationEmail,
                 onEmailChange = viewModel::onEmailChange,
                 onPasswordChange = viewModel::onPasswordChange,
                 onLoginClick = viewModel::loginWithEmail,

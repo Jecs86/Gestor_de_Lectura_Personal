@@ -44,8 +44,11 @@ class RegisterViewModel : ViewModel() {
 
         auth.createUserWithEmailAndPassword(state.email, state.password)
             .addOnSuccessListener { result ->
-                val uid = result.user!!.uid
+                val firebaseUser = result.user!!
+                val uid = firebaseUser.uid
                 val now = Timestamp.now()
+
+                firebaseUser.sendEmailVerification()
 
                 val newUser = User(
                     uid = uid,
@@ -60,7 +63,7 @@ class RegisterViewModel : ViewModel() {
                     .document(uid)
                     .set(newUser)
                     .addOnSuccessListener {
-                        auth.signOut() // 👈 clave
+                        auth.signOut()
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             isRegistered = true

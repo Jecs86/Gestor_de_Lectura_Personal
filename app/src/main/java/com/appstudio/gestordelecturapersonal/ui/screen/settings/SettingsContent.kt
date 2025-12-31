@@ -1,5 +1,6 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.settings
 
+import android.provider.ContactsContract.CommonDataKinds.Email
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SettingsContent(
     paddingValues: PaddingValues,
+    email: String?,
     onLogoutClick: () -> Unit
 ) {
     Column(
@@ -23,9 +25,8 @@ fun SettingsContent(
 
         SettingsSection(title = "Cuenta") {
             SettingsItem(
-                title = "Editar perfil",
-                subtitle = "Nombre, foto, correo",
-                onClick = { /* navegar a perfil */ }
+                title = email ?: "Sin sesión activa",
+                subtitle = "Cuenta conectada"
             )
 
             SettingsItem(

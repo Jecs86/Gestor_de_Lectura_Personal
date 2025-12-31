@@ -12,7 +12,9 @@ fun RegisterScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     if (uiState.isRegistered) {
-        onRegisterSuccess()
+        LaunchedEffect(Unit) {
+            onRegisterSuccess()
+        }
     }
 
     Scaffold { paddingValues ->

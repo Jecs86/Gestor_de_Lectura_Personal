@@ -47,23 +47,63 @@ class LoginViewModel(
             return
         }
 
-        _uiState.value = _uiState.value.copy(isLoading = true)
+        _uiState.value = _uiState.value.copy(
+            isLoading = true,
+            errorMessage = null,
+            showResendVerification = false
+        )
 
         auth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                userRepository.saveUserIfNotExists(
-                    proveedor = "email"
-                ) { success, error ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        isLoggedIn = success,
-                        errorMessage = error
-                    )
-                }
+            .addOnSuccessListener { result ->
+                val user = result.user!!
+
+                user.reload()
+                    .addOnSuccessListener {
+                        if (!user.isEmailVerified) {
+                            auth.signOut()
+
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                errorMessage = "Debes verificar tu correo antes de iniciar sesión",
+                                showResendVerification = true
+                            )
+                            return@addOnSuccessListener
+                        }
+
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            isLoggedIn = true
+                        )
+                    }
             }
             .addOnFailureListener {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
+                    errorMessage = it.message,
+                    showResendVerification = false
+                )
+            }
+    }
+
+    fun resendVerificationEmail() {
+        val user = auth.currentUser
+
+        if (user == null) {
+            _uiState.value = _uiState.value.copy(
+                errorMessage = "Inicia sesión nuevamente para reenviar el correo"
+            )
+            return
+        }
+
+        user.sendEmailVerification()
+            .addOnSuccessListener {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Correo de verificación reenviado",
+                    showResendVerification = false
+                )
+            }
+            .addOnFailureListener {
+                _uiState.value = _uiState.value.copy(
                     errorMessage = it.message
                 )
             }

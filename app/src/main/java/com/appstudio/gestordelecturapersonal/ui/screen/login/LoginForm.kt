@@ -24,7 +24,9 @@ fun LoginForm(
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
-    onForgotPasswordClick: () -> Unit
+    onForgotPasswordClick: () -> Unit,
+    onResendVerificationClick: () -> Unit,
+    showResendVerification: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -60,6 +62,20 @@ fun LoginForm(
         ) {
             Text("Iniciar sesión")
         }
+
+        if (showResendVerification) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(
+                onClick = onResendVerificationClick,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
+            ) {
+                Text("Reenviar correo de verificación")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Button(
             onClick = onRegisterClick,

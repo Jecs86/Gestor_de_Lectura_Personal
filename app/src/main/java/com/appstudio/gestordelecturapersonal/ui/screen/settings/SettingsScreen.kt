@@ -31,6 +31,7 @@ fun SettingsScreen(
     ) { paddingValues ->
         SettingsContent(
             paddingValues = paddingValues,
+            email = uiState.email,
             onLogoutClick = viewModel::logout
         )
     }
