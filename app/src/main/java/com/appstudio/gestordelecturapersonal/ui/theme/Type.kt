@@ -27,6 +27,7 @@ val displayFontFamily = FontFamily(
     Font(
         googleFont = GoogleFont("Figtree"),
         fontProvider = provider,
+        weight = FontWeight(500)
     )
 )
 

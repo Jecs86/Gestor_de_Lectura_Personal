@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
 
 @Composable
 fun SettingsScreen(
@@ -23,7 +24,9 @@ fun SettingsScreen(
 
     Scaffold(
         topBar = {
-            SettingsTopBar()
+            AppTopBar(
+                title = "Configuración"
+            )
         },
         bottomBar = {
             AppBottomBar(navController)

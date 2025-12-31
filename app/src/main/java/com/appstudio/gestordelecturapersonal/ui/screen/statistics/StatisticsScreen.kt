@@ -4,6 +4,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
+import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
+import com.appstudio.gestordelecturapersonal.ui.component.AppTopBarPreview
 
 @Composable
 fun StatisticsScreen(
@@ -11,7 +13,9 @@ fun StatisticsScreen(
 ) {
     Scaffold(
         topBar = {
-            StatisticsTopBar()
+            AppTopBar(
+                title = "Estadísticas"
+            )
         },
         bottomBar = { AppBottomBar(navController) }
     ) { paddingValues ->
