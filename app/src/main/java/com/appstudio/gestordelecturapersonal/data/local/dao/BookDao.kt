@@ -3,6 +3,7 @@ package com.appstudio.gestordelecturapersonal.data.local.dao
 import androidx.room.*
 import com.appstudio.gestordelecturapersonal.data.local.entity.BookEntity
 import com.appstudio.gestordelecturapersonal.ui.screen.books.list.BookUiModel
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -21,8 +22,12 @@ interface BookDao {
     @Update
     suspend fun actualizar(book: BookEntity)
 
-    @Query("UPDATE books SET estaEliminado = 1 WHERE id = :id")
-    suspend fun eliminarLogico(id: Long)
+    @Query("""
+        UPDATE books
+        SET estaEliminado = 1, fechaActualizacion = :timestamp
+        WHERE id = :id
+    """)
+    suspend fun eliminarLogico(id: Long, timestamp: Long)
 
     @Query("SELECT * FROM books WHERE id = :id LIMIT 1")
     suspend fun obtenerPorUid(id: Long): BookEntity?

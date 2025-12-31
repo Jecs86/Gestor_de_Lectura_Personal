@@ -29,4 +29,14 @@ class BooksViewModel(
         }
     }
 
+    fun softDeleteBook(bookId: Long) {
+        viewModelScope.launch {
+            bookDao.eliminarLogico(
+                id = bookId,
+                timestamp = System.currentTimeMillis()
+            )
+            loadBooks()
+        }
+    }
+
 }

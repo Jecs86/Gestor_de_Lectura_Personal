@@ -39,6 +39,8 @@ fun BooksScreen(
 
     val libros by viewModel.books.collectAsState()
 
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -77,9 +79,25 @@ fun BooksScreen(
                     selectedBook = null
                     navController.navigate("edit_book/${book.id}")
                 },
-                onDelete = { /* FUTURO */ },
+                onDelete = {
+                    showDeleteDialog = true
+                },
                 onAddNote = { /* FUTURO */ },
                 onViewNotes = { /* FUTURO */ }
+            )
+        }
+
+        if (showDeleteDialog && selectedBook != null) {
+            DeleteBookDialog(
+                bookTitle = selectedBook!!.titulo,
+                onConfirm = {
+                    viewModel.softDeleteBook(selectedBook!!.id)
+                    selectedBook = null
+                    showDeleteDialog = false
+                },
+                onDismiss = {
+                    showDeleteDialog = false
+                }
             )
         }
     }
