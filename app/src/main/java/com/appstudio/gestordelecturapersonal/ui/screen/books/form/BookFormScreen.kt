@@ -34,7 +34,8 @@ fun BookFormScreen(
         factory = BookFormViewModelFactory(
             database.bookDao(),
             database.authorDao(),
-            database.genreDao()
+            database.genreDao(),
+            context
         )
     )
 

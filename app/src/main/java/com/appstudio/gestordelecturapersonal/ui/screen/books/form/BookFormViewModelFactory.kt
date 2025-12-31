@@ -1,5 +1,6 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.books.form
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.appstudio.gestordelecturapersonal.data.local.dao.AuthorDao
@@ -9,12 +10,13 @@ import com.appstudio.gestordelecturapersonal.data.local.dao.GenreDao
 class BookFormViewModelFactory (
     private val bookDao: BookDao,
     private val authorDao: AuthorDao,
-    private val genreDao: GenreDao
+    private val genreDao: GenreDao,
+    private val context: Context
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(BookFormViewModel::class.java)) {
-            return BookFormViewModel(bookDao, authorDao, genreDao) as T
+            return BookFormViewModel(bookDao, authorDao, genreDao, context.applicationContext) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

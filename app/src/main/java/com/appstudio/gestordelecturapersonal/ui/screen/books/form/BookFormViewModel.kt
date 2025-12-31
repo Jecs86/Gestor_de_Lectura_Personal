@@ -1,5 +1,6 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.books.form
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,11 +14,14 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 class BookFormViewModel(
     private val bookDao: BookDao,
     private val authorDao: AuthorDao,
-    private val genreDao: GenreDao
+    private val genreDao: GenreDao,
+    private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BookFormUiState())
@@ -32,6 +36,26 @@ class BookFormViewModel(
     init {
         loadAuthors()
         loadGenres()
+    }
+
+    private fun copyImageToInternalStorage(uri: Uri): String? {
+        return try {
+            val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+            // Creamos un nombre único para la imagen
+            val fileName = "book_cover_${System.currentTimeMillis()}.jpg"// Creamos el archivo en la carpeta privada de la app
+            val file = File(context.filesDir, fileName)
+            val outputStream = FileOutputStream(file)
+
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)}
+            }
+            // Devolvemos la ruta absoluta del nuevo archivo (file://...)
+            file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     private fun loadAuthors() {
@@ -88,27 +112,44 @@ class BookFormViewModel(
             )
         }
     }
-    //TODO RESOLVER FALLO NULO
+
     fun saveOrUpdateBook() {
         val state = _uiState.value
-        val now = System.currentTimeMillis()
+        if (state.autorId == null || state.generoId == null) return
+        if (state.titulo.isBlank()) return
+        if (state.paginasTotales.isBlank()) return
+        if (state.paginasLeidas.isBlank()) return
 
-        val book = BookEntity(
-            id = state.id ?: 0L,
-            uid = state.uid ?: FirebaseAuth.getInstance().currentUser!!.uid,
-            titulo = state.titulo,
-            authorId = state.autorId!!,
-            genreId = state.generoId!!,
-            estado = state.estado,
-            paginasTotales = state.paginasTotales.toInt(),
-            paginasLeidas = state.paginasLeidas.toInt(),
-            urlPortada = state.portadaUri?.toString(),
-            fechaCreacion = now,
-            fechaActualizacion = now,
-            estaEliminado = false
-        )
 
         viewModelScope.launch {
+
+            var finalCoverPath = state.portadaUri?.toString()
+
+            // Si la URI empieza por "content://", significa que viene de la galería y hay que copiarla
+            if (state.portadaUri != null && state.portadaUri.toString().startsWith("content://")) {
+                val newPath = copyImageToInternalStorage(state.portadaUri)
+                if (newPath != null) {
+                    finalCoverPath = newPath // Guardamos la ruta local (file://...)
+                }
+            }
+
+            val now = System.currentTimeMillis()
+
+            val book = BookEntity(
+                id = state.id ?: 0L,
+                uid = state.uid ?: FirebaseAuth.getInstance().currentUser!!.uid,
+                titulo = state.titulo,
+                authorId = state.autorId,
+                genreId = state.generoId,
+                estado = state.estado,
+                paginasTotales = state.paginasTotales.toInt(),
+                paginasLeidas = state.paginasLeidas.toInt(),
+                urlPortada = finalCoverPath,
+                fechaCreacion = now,
+                fechaActualizacion = now,
+                estaEliminado = false
+            )
+
             if (state.isEdit) {
                 bookDao.actualizar(book)
             } else {
