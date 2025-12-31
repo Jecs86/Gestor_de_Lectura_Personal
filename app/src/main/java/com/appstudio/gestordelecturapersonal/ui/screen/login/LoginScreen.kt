@@ -68,7 +68,9 @@ fun LoginScreen(
                 onRegisterClick = {
                     navController.navigate(AppRoutes.Register.route)
                 },
-                onForgotPasswordClick = {/* TODO */},
+                onForgotPasswordClick = {
+                    navController.navigate(AppRoutes.RecoverPassword.route)
+                },
                 onGoogleLoginClick = {
                     launcher.launch(
                         googleAuthClient.googleSignInClient.signInIntent

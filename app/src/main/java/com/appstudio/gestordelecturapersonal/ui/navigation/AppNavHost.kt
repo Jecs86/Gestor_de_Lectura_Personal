@@ -5,10 +5,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.appstudio.gestordelecturapersonal.ui.auth.AuthGateScreen
-import com.appstudio.gestordelecturapersonal.ui.auth.AuthGateViewModel
+import com.appstudio.gestordelecturapersonal.ui.screen.auth.AuthGateScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.login.LoginScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.books.BooksScreen
+import com.appstudio.gestordelecturapersonal.ui.screen.recoverpassword.RecoverPasswordScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.register.RegisterScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.settings.SettingsScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.statistics.StatisticsScreen
@@ -56,6 +56,15 @@ fun AppNavHost(
         composable(AppRoutes.Register.route) {
             RegisterScreen(
                 onRegisterSuccess = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ---------- RECOVERY PASSWORD ----------
+        composable(AppRoutes.RecoverPassword.route) {
+            RecoverPasswordScreen(
+                onBackToLogin = {
                     navController.popBackStack()
                 }
             )

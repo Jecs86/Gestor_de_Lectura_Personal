@@ -1,4 +1,4 @@
-package com.appstudio.gestordelecturapersonal.ui.auth
+package com.appstudio.gestordelecturapersonal.ui.screen.auth
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
