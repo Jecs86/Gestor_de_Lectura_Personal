@@ -2,12 +2,15 @@ package com.appstudio.gestordelecturapersonal.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.appstudio.gestordelecturapersonal.ui.screen.auth.AuthGateScreen
+import com.appstudio.gestordelecturapersonal.ui.screen.books.form.BookFormScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.login.LoginScreen
-import com.appstudio.gestordelecturapersonal.ui.screen.books.BooksScreen
+import com.appstudio.gestordelecturapersonal.ui.screen.books.list.BooksScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.recoverpassword.RecoverPasswordScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.register.RegisterScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.settings.SettingsScreen
@@ -72,12 +75,39 @@ fun AppNavHost(
 
         // ---------- BOOKS ----------
         composable(AppRoutes.Books.route) {
-            BooksScreen(navController = navController)
+            BooksScreen(
+                navController = navController
+            )
+        }
+
+        composable(AppRoutes.AddBook.route) {
+            BookFormScreen(
+                navController = navController,
+                onBackPage = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = AppRoutes.EditBook.route,
+            arguments = listOf(navArgument("bookId") { type = NavType.LongType })
+        ) {
+            val bookId = it.arguments?.getLong("bookId")
+            BookFormScreen(
+                navController = navController,
+                bookId = bookId,
+                onBackPage = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         // ---------- STATISTICS ----------
         composable(AppRoutes.Statistics.route) {
-            StatisticsScreen(navController = navController)
+            StatisticsScreen(
+                navController = navController
+            )
         }
 
         // ---------- SETTINGS ----------

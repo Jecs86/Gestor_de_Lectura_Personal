@@ -1,4 +1,4 @@
-package com.appstudio.gestordelecturapersonal.ui.screen.books
+package com.appstudio.gestordelecturapersonal.ui.screen.books.list
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BooksContent(
     modifier: Modifier = Modifier,
-    libros: List<BookUiModel>
+    libros: List<BookUiModel>,
+    onBookClick: (BookUiModel) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier.padding(16.dp),
@@ -22,7 +23,10 @@ fun BooksContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(libros) { libro ->
-            BookCard(book = libro)
+            BookCard(
+                book = libro,
+                onClick = { onBookClick(libro)}
+            )
         }
     }
 }

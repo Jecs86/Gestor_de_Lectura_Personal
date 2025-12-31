@@ -12,6 +12,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarItemDefaults
 
 @Composable
 fun AppBottomBar(
@@ -37,7 +39,9 @@ fun AppBottomBar(
         )
     )
 
-    NavigationBar {
+    NavigationBar (
+        containerColor = MaterialTheme.colorScheme.primaryContainer
+    ) {
         items.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
@@ -57,7 +61,12 @@ fun AppBottomBar(
                 },
                 label = {
                     Text(item.label)
-                }
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = MaterialTheme.colorScheme.primary,
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondary,
+                    unselectedIconColor = MaterialTheme.colorScheme.surfaceTint
+                )
             )
         }
     }

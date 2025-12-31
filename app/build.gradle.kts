@@ -90,4 +90,5 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.androidx.compose.ui.text.google.fonts)
+    implementation(libs.coil.compose)
 }

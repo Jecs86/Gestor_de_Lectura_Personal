@@ -1,0 +1,83 @@
+package com.appstudio.gestordelecturapersonal.ui.component
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.appstudio.gestordelecturapersonal.R
+import com.appstudio.gestordelecturapersonal.ui.screen.books.list.BookUiModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BookOptionsBottomSheet(
+    book: BookUiModel,
+    onDismiss: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onAddNote: () -> Unit,
+    onViewNotes: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        windowInsets = WindowInsets(0)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            AsyncImage(
+                model = book.urlPortada,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.ic_book_placeholder),
+                error = painterResource(R.drawable.ic_book_placeholder)
+            )
+
+            Text(
+                text = book.titulo,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Divider()
+
+            Button(onClick = onEdit, modifier = Modifier.fillMaxWidth()) {
+                Text("✏️ Editar libro")
+            }
+
+            Button(onClick = onAddNote, modifier = Modifier.fillMaxWidth()) {
+                Text("📝 Agregar nota")
+            }
+
+            Button(onClick = onViewNotes, modifier = Modifier.fillMaxWidth()) {
+                Text("📖 Ver notas")
+            }
+
+            OutlinedButton(
+                onClick = onDelete,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("🗑️ Eliminar libro")
+            }
+
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cerrar")
+            }
+        }
+    }
+}
