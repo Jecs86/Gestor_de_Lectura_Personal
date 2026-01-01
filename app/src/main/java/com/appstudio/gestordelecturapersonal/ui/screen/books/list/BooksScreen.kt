@@ -20,6 +20,7 @@ import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
 import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
 import com.appstudio.gestordelecturapersonal.ui.component.BookOptionsBottomSheet
+import com.appstudio.gestordelecturapersonal.ui.navigation.AppRoutes
 
 
 @Composable
@@ -82,8 +83,18 @@ fun BooksScreen(
                 onDelete = {
                     showDeleteDialog = true
                 },
-                onAddNote = { /* FUTURO */ },
-                onViewNotes = { /* FUTURO */ }
+                onAddNote = {
+                    selectedBook = null
+                    navController.navigate(
+                        AppRoutes.AddNote.createRoute(book.id)
+                    )
+                },
+                onViewNotes = {
+                    selectedBook = null
+                    navController.navigate(
+                        AppRoutes.Notes.createRoute(book.id)
+                    )
+                }
             )
         }
 

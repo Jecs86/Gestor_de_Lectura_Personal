@@ -14,6 +14,12 @@ interface NoteDao {
     """)
     fun obtenerNotas(bookId: Long): Flow<List<NoteEntity>>
 
+    @Query("SELECT * FROM notes WHERE id = :noteId LIMIT 1")
+    suspend fun obtenerPorId(noteId: Long): NoteEntity
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertar(note: NoteEntity)
+
+    @Update
+    suspend fun actualizar(note: NoteEntity)
 }

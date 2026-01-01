@@ -11,6 +11,8 @@ import com.appstudio.gestordelecturapersonal.ui.screen.auth.AuthGateScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.books.form.BookFormScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.login.LoginScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.books.list.BooksScreen
+import com.appstudio.gestordelecturapersonal.ui.screen.notes.NotesScreen
+import com.appstudio.gestordelecturapersonal.ui.screen.notes.form.NoteFormScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.recoverpassword.RecoverPasswordScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.register.RegisterScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.settings.SettingsScreen
@@ -97,6 +99,54 @@ fun AppNavHost(
             BookFormScreen(
                 navController = navController,
                 bookId = bookId,
+                onBackPage = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ---------- NOTES ----------
+        composable(
+            route = AppRoutes.Notes.route,
+            arguments = listOf(navArgument("bookId") { type = NavType.LongType })
+        ) {
+            val bookId = it.arguments!!.getLong("bookId")
+            NotesScreen(
+                navController = navController,
+                bookId = bookId,
+                onBackPage = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = AppRoutes.AddNote.route,
+            arguments = listOf(navArgument("bookId") { type = NavType.LongType })
+        ) {
+            val bookId = it.arguments!!.getLong("bookId")
+            NoteFormScreen(
+                navController = navController,
+                bookId = bookId,
+                onBackPage = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = AppRoutes.EditNote.route,
+            arguments = listOf(
+                navArgument("bookId") { type = NavType.LongType },
+                navArgument("noteId") { type = NavType.LongType }
+            )
+        ) {
+            val bookId = it.arguments!!.getLong("bookId")
+            val noteId = it.arguments!!.getLong("noteId")
+            NoteFormScreen(
+                navController = navController,
+                bookId = bookId,
+                noteId = noteId,
                 onBackPage = {
                     navController.popBackStack()
                 }
