@@ -22,4 +22,15 @@ interface NoteDao {
 
     @Update
     suspend fun actualizar(note: NoteEntity)
+
+    @Query("""
+        UPDATE notes
+        SET estaEliminado = 1,
+            fechaActualizacion = :fecha
+        WHERE id = :noteId
+    """)
+    suspend fun softDeleteNote(
+        noteId: Long,
+        fecha: Long = System.currentTimeMillis()
+    )
 }

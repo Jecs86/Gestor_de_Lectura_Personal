@@ -58,6 +58,9 @@ fun NotesScreen(
                 navController.navigate(
                     AppRoutes.EditNote.createRoute(bookId, noteId)
                 )
+            },
+            onDeleteNote = {noteId ->
+                viewModel.softDeleteNote(noteId)
             }
         )
     }

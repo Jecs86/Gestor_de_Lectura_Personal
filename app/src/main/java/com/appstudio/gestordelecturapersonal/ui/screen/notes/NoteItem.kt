@@ -13,14 +13,16 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun NoteItem(
     note: NoteUiModel,
-    onLongPress: () -> Unit
+    onLongPress: () -> Unit,
+    onDoubleClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
                 onClick = {},
-                onLongClick = { onLongPress() }
+                onLongClick = { onLongPress() },
+                onDoubleClick = { onDoubleClick() }
             ),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {

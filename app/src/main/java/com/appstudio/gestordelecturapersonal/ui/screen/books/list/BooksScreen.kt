@@ -20,6 +20,7 @@ import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
 import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
 import com.appstudio.gestordelecturapersonal.ui.component.BookOptionsBottomSheet
+import com.appstudio.gestordelecturapersonal.ui.component.DeleteDialog
 import com.appstudio.gestordelecturapersonal.ui.navigation.AppRoutes
 
 
@@ -99,8 +100,9 @@ fun BooksScreen(
         }
 
         if (showDeleteDialog && selectedBook != null) {
-            DeleteBookDialog(
-                bookTitle = selectedBook!!.titulo,
+            DeleteDialog(
+                element = selectedBook!!.titulo,
+                elementTitle = "Libro",
                 onConfirm = {
                     viewModel.softDeleteBook(selectedBook!!.id)
                     selectedBook = null

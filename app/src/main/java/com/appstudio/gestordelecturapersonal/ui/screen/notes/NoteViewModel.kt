@@ -27,4 +27,12 @@ class NotesViewModel(
             }
         }
     }
+
+    fun softDeleteNote(noteId: Long) {
+        viewModelScope.launch {
+            noteDao.softDeleteNote(
+                noteId = noteId
+            )
+        }
+    }
 }
