@@ -14,10 +14,13 @@ class NotesViewModel(
 ) : ViewModel() {
 
     private val _notes = MutableStateFlow<List<NoteUiModel>>(emptyList())
+    private val _deletedNotes = MutableStateFlow<List<NoteUiModel>>(emptyList())
     val notes: StateFlow<List<NoteUiModel>> = _notes
+    val deletedNotes: StateFlow<List<NoteUiModel>> = _deletedNotes
 
     init {
         observeNotes()
+        observeDeletedNotes()
     }
 
     private fun observeNotes() {
@@ -28,11 +31,31 @@ class NotesViewModel(
         }
     }
 
+    private fun observeDeletedNotes() {
+        viewModelScope.launch {
+            noteDao.getDeletedNotesByBook(bookId).collect { list ->
+                _deletedNotes.value = list.map { it.toUiModel() }
+            }
+        }
+    }
+
     fun softDeleteNote(noteId: Long) {
         viewModelScope.launch {
             noteDao.softDeleteNote(
                 noteId = noteId
             )
+        }
+    }
+
+    fun restoreNote(noteId: Long) {
+        viewModelScope.launch {
+            noteDao.restoreNote(noteId)
+        }
+    }
+
+    fun deleteNoteForever(noteId: Long) {
+        viewModelScope.launch {
+            noteDao.deleteNoteForever(noteId)
         }
     }
 }

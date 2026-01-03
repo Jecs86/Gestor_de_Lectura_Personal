@@ -1,12 +1,15 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.notes
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +43,8 @@ fun NotesScreen(
 
     val notes by viewModel.notes.collectAsState()
 
+    var showTrash by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -47,6 +52,14 @@ fun NotesScreen(
                 needBackPage = true,
                 onBackPage = onBackPage
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton( onClick = { showTrash = true }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Papelera"
+                )
+            }
         }
     ) { padding ->
         NotesContent(
@@ -63,5 +76,14 @@ fun NotesScreen(
                 viewModel.softDeleteNote(noteId)
             }
         )
+
+        if (showTrash) {
+            NotesTrashBottomSheet(
+                notes = viewModel.deletedNotes.collectAsState().value,
+                onRestore = { viewModel.restoreNote(it) },
+                onDeleteForever = { viewModel.deleteNoteForever(it) },
+                onDismiss = { showTrash = false }
+            )
+        }
     }
 }

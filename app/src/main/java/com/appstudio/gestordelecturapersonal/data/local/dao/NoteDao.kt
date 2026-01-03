@@ -33,4 +33,29 @@ interface NoteDao {
         noteId: Long,
         fecha: Long = System.currentTimeMillis()
     )
+
+    @Query("""
+        SELECT * FROM notes
+        WHERE bookId = :bookId
+        AND estaEliminado = 1
+        ORDER BY fechaActualizacion DESC
+    """)
+    fun getDeletedNotesByBook(bookId: Long): Flow<List<NoteEntity>>
+
+    @Query("""
+        UPDATE notes
+        SET estaEliminado = 0,
+            fechaActualizacion = :timestamp
+        WHERE id = :noteId
+    """)
+    suspend fun restoreNote(
+        noteId: Long,
+        timestamp: Long = System.currentTimeMillis()
+    )
+
+    @Query("""
+        DELETE FROM notes
+        WHERE id = :noteId
+    """)
+    suspend fun deleteNoteForever(noteId: Long)
 }
