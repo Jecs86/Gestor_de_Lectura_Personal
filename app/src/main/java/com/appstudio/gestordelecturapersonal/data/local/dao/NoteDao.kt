@@ -1,6 +1,7 @@
 package com.appstudio.gestordelecturapersonal.data.local.dao
 
 import androidx.room.*
+import com.appstudio.gestordelecturapersonal.data.local.entity.BookEntity
 import com.appstudio.gestordelecturapersonal.data.local.entity.NoteEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -61,4 +62,24 @@ interface NoteDao {
 
     @Query("DELETE FROM notes WHERE bookId = :bookId")
     suspend fun deleteNotesByBook(bookId: Long)
+
+    @Query("SELECT * FROM notes WHERE bookId = :bookId")
+    suspend fun obtenerNotasPorLibroOnce(bookId: Long): List<NoteEntity>
+
+    @Query("""
+    UPDATE notes
+    SET syncPending = 1,
+        fechaActualizacion = :timestamp
+    WHERE id = :noteId
+    """)
+    suspend fun markSyncPending(
+        noteId: Long,
+        timestamp: Long = System.currentTimeMillis()
+    )
+
+    @Query("SELECT * FROM notes WHERE syncPending = 1")
+    suspend fun getPendingSyncNotes(): List<NoteEntity>
+
+    @Query("UPDATE notes SET syncPending = 0 WHERE id = :noteId")
+    suspend fun clearSyncPending(noteId: Long)
 }

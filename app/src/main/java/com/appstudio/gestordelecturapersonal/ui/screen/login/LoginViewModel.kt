@@ -9,6 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.appstudio.gestordelecturapersonal.data.repository.UserRepository
+import androidx.lifecycle.viewModelScope
+import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
+import com.appstudio.gestordelecturapersonal.data.repository.SyncRepository
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class LoginViewModel(
     application: Application
@@ -19,6 +24,12 @@ class LoginViewModel(
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
+
+    private val database = DatabaseProvider.getDatabase(application)
+    private val syncRepository = SyncRepository(
+        db = database,
+        firestore = FirebaseFirestore.getInstance()
+    )
 
     // ===============================
     // INPUTS
@@ -69,11 +80,13 @@ class LoginViewModel(
                             )
                             return@addOnSuccessListener
                         }
-
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            isLoggedIn = true
-                        )
+                        viewModelScope.launch {
+                            syncRepository.syncFromFirestore(user.uid)
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                isLoggedIn = true
+                            )
+                        }
                     }
             }
             .addOnFailureListener {
@@ -123,11 +136,21 @@ class LoginViewModel(
                 userRepository.saveUserIfNotExists(
                     proveedor = "google"
                 ) { success, error ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        isLoggedIn = success,
-                        errorMessage = error
-                    )
+                    if (success) {
+                        viewModelScope.launch {
+                            val uid = auth.currentUser!!.uid
+                            syncRepository.syncFromFirestore(uid)
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                isLoggedIn = true,
+                            )
+                        }
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            errorMessage = error
+                        )
+                    }
                 }
             }
             .addOnFailureListener {

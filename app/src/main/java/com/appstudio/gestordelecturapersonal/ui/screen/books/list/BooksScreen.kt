@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
+import com.appstudio.gestordelecturapersonal.data.repository.SyncManager
 import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
 import com.appstudio.gestordelecturapersonal.ui.component.BookOptionsBottomSheet
@@ -30,7 +31,8 @@ import com.appstudio.gestordelecturapersonal.ui.navigation.AppRoutes
 
 @Composable
 fun BooksScreen(
-    navController: NavController
+    navController: NavController,
+    syncManager: SyncManager?
 ) {
 
     val context = LocalContext.current
@@ -39,8 +41,10 @@ fun BooksScreen(
 
     val viewModel: BooksViewModel = viewModel(
         factory = BooksViewModelFactory(
+            database.pendingDeleteDao(),
             database.bookDao(),
-            database.noteDao()
+            database.noteDao(),
+            syncManager
         )
     )
 

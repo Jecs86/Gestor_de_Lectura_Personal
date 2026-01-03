@@ -72,4 +72,24 @@ interface BookDao {
     @Query("DELETE FROM books WHERE id = :id")
     suspend fun eliminarLibroDefinitivo(id: Long)
 
+    @Query("SELECT * FROM books WHERE uid = :uid")
+    suspend fun obtenerLibrosOnce(uid: String): List<BookEntity>
+
+    @Query("""
+    UPDATE books
+    SET syncPending = 1,
+        fechaActualizacion = :timestamp
+    WHERE id = :bookId
+    """)
+    suspend fun markSyncPending(
+        bookId: Long,
+        timestamp: Long = System.currentTimeMillis()
+    )
+
+    @Query("SELECT * FROM books WHERE syncPending = 1")
+    suspend fun getPendingSyncBooks(): List<BookEntity>
+
+    @Query("UPDATE books SET syncPending = 0 WHERE id = :bookId")
+    suspend fun clearSyncPending(bookId: Long)
+
 }

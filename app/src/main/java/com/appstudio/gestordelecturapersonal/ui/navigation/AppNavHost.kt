@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.appstudio.gestordelecturapersonal.data.repository.SyncManager
 import com.appstudio.gestordelecturapersonal.ui.screen.auth.AuthGateScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.books.form.BookFormScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.login.LoginScreen
@@ -20,7 +21,8 @@ import com.appstudio.gestordelecturapersonal.ui.screen.statistics.StatisticsScre
 
 @Composable
 fun AppNavHost(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    syncManager: SyncManager? = null
 ) {
     NavHost(
         navController = navController,
@@ -78,7 +80,8 @@ fun AppNavHost(
         // ---------- BOOKS ----------
         composable(AppRoutes.Books.route) {
             BooksScreen(
-                navController = navController
+                navController = navController,
+                syncManager = syncManager
             )
         }
 
@@ -87,7 +90,8 @@ fun AppNavHost(
                 navController = navController,
                 onBackPage = {
                     navController.popBackStack()
-                }
+                },
+                syncManager = syncManager
             )
         }
 
@@ -101,7 +105,8 @@ fun AppNavHost(
                 bookId = bookId,
                 onBackPage = {
                     navController.popBackStack()
-                }
+                },
+                syncManager = syncManager
             )
         }
 
@@ -116,7 +121,8 @@ fun AppNavHost(
                 bookId = bookId,
                 onBackPage = {
                     navController.popBackStack()
-                }
+                },
+                syncManager = syncManager
             )
         }
 
@@ -130,7 +136,8 @@ fun AppNavHost(
                 bookId = bookId,
                 onBackPage = {
                     navController.popBackStack()
-                }
+                },
+                syncManager = syncManager
             )
         }
 
@@ -149,7 +156,8 @@ fun AppNavHost(
                 noteId = noteId,
                 onBackPage = {
                     navController.popBackStack()
-                }
+                },
+                syncManager = syncManager
             )
         }
 

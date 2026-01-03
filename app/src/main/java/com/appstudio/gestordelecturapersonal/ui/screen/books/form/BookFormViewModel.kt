@@ -2,6 +2,7 @@ package com.appstudio.gestordelecturapersonal.ui.screen.books.form
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appstudio.gestordelecturapersonal.data.local.dao.AuthorDao
@@ -10,18 +11,23 @@ import com.appstudio.gestordelecturapersonal.data.local.dao.GenreDao
 import com.appstudio.gestordelecturapersonal.data.local.entity.AuthorEntity
 import com.appstudio.gestordelecturapersonal.data.local.entity.BookEntity
 import com.appstudio.gestordelecturapersonal.data.local.entity.GenreEntity
+import com.appstudio.gestordelecturapersonal.data.repository.SyncManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class BookFormViewModel(
     private val bookDao: BookDao,
     private val authorDao: AuthorDao,
     private val genreDao: GenreDao,
-    private val context: Context
+    private val syncManager: SyncManager?
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BookFormUiState())
@@ -36,26 +42,6 @@ class BookFormViewModel(
     init {
         loadAuthors()
         loadGenres()
-    }
-
-    private fun copyImageToInternalStorage(uri: Uri): String? {
-        return try {
-            val inputStream = context.contentResolver.openInputStream(uri) ?: return null
-            // Creamos un nombre único para la imagen
-            val fileName = "book_cover_${System.currentTimeMillis()}.jpg"// Creamos el archivo en la carpeta privada de la app
-            val file = File(context.filesDir, fileName)
-            val outputStream = FileOutputStream(file)
-
-            inputStream.use { input ->
-                outputStream.use { output ->
-                    input.copyTo(output)}
-            }
-            // Devolvemos la ruta absoluta del nuevo archivo (file://...)
-            file.absolutePath
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
     }
 
     private fun loadAuthors() {
@@ -79,8 +65,10 @@ class BookFormViewModel(
             authorDao.insertar(AuthorEntity(
                 nombre = nombre,
                 fechaCreacion = System.currentTimeMillis(),
-                fechaActualizacion = System.currentTimeMillis()
+                fechaActualizacion = System.currentTimeMillis(),
+                syncPending = true
             ))
+            syncManager?.notifyChange()
         }
     }
 
@@ -89,8 +77,10 @@ class BookFormViewModel(
             genreDao.insertar(GenreEntity(
                 nombre = nombre,
                 fechaCreacion = System.currentTimeMillis(),
-                fechaActualizacion = System.currentTimeMillis()
+                fechaActualizacion = System.currentTimeMillis(),
+                syncPending = true
             ))
+            syncManager?.notifyChange()
         }
     }
 
@@ -120,40 +110,72 @@ class BookFormViewModel(
         if (state.paginasTotales.isBlank()) return
         if (state.paginasLeidas.isBlank()) return
 
+        _uiState.value = _uiState.value.copy(isLoading = true)
 
-        viewModelScope.launch {
+        Log.d("SYNC", "Iniciando Guardar/Actualizar Libro")
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                var finalCoverUrl: String? = state.portadaUri?.toString()
 
-            var finalCoverPath = state.portadaUri?.toString()
+                if (state.portadaUri != null && state.portadaUri.toString().startsWith("content://")) {
 
-            // Si la URI empieza por "content://", significa que viene de la galería y hay que copiarla
-            if (state.portadaUri != null && state.portadaUri.toString().startsWith("content://")) {
-                val newPath = copyImageToInternalStorage(state.portadaUri)
-                if (newPath != null) {
-                    finalCoverPath = newPath // Guardamos la ruta local (file://...)
+                    Log.d("SYNC", "Intentando subir imagen: ${state.portadaUri}")
+
+                    val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                    val bookId = state.id ?: System.currentTimeMillis()
+
+                    val storageRef = FirebaseStorage.getInstance()
+                        .reference
+                        .child("book_covers/$uid/$bookId.jpg")
+
+                    storageRef.putFile(state.portadaUri).await()
+
+                    Log.d("SYNC", "Imagen subida, obteniendo URL...")
+
+                    finalCoverUrl = storageRef.downloadUrl.await().toString()
+
+                    Log.d("SYNC", "URL obtenida: $finalCoverUrl")
                 }
-            }
 
-            val now = System.currentTimeMillis()
+                val now = System.currentTimeMillis()
 
-            val book = BookEntity(
-                id = state.id ?: 0L,
-                uid = state.uid ?: FirebaseAuth.getInstance().currentUser!!.uid,
-                titulo = state.titulo,
-                authorId = state.autorId,
-                genreId = state.generoId,
-                estado = state.estado,
-                paginasTotales = state.paginasTotales.toInt(),
-                paginasLeidas = state.paginasLeidas.toInt(),
-                urlPortada = finalCoverPath,
-                fechaCreacion = now,
-                fechaActualizacion = now,
-                estaEliminado = false
-            )
+                val book = BookEntity(
+                    id = state.id ?: 0L,
+                    uid = state.uid ?: FirebaseAuth.getInstance().currentUser!!.uid,
+                    titulo = state.titulo,
+                    authorId = state.autorId,
+                    genreId = state.generoId,
+                    estado = state.estado,
+                    paginasTotales = state.paginasTotales.toInt(),
+                    paginasLeidas = state.paginasLeidas.toInt(),
+                    urlPortada = finalCoverUrl,
+                    fechaCreacion = now,
+                    fechaActualizacion = now,
+                    estaEliminado = false,
+                    syncPending = true
+                )
 
-            if (state.isEdit) {
-                bookDao.actualizar(book)
-            } else {
-                bookDao.insertar(book)
+                if (state.isEdit) {
+                    bookDao.actualizar(book)
+                } else {
+                    bookDao.insertar(book)
+                }
+                syncManager?.notifyChange()
+                Log.d("SYNC", "Teminando Guardar/Actualizar Libro")
+
+                withContext(Dispatchers.Main) {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        isSaved = true
+                    )
+                }
+
+
+            }catch (e: Exception) {
+                Log.e("SYNC", "Error al sincronizar con Firestore al guardar", e)
+                withContext(Dispatchers.Main){
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                }
             }
         }
     }

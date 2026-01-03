@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
+import com.appstudio.gestordelecturapersonal.data.repository.SyncManager
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +22,8 @@ fun NoteFormScreen(
     navController: NavController,
     bookId: Long,
     noteId: Long? = null,
-    onBackPage: () -> Unit
+    onBackPage: () -> Unit,
+    syncManager: SyncManager?
 ) {
     val context = LocalContext.current
 
@@ -30,7 +32,8 @@ fun NoteFormScreen(
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 val database = DatabaseProvider.getDatabase(context)
                 return NoteFormViewModel(
-                    noteDao = database.noteDao()
+                    noteDao = database.noteDao(),
+                    syncManager = syncManager
                 ) as T
             }
         }

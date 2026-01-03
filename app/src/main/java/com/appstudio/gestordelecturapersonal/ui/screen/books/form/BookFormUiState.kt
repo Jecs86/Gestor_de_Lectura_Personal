@@ -12,5 +12,7 @@ data class BookFormUiState(
     val paginasTotales: String = "",
     val paginasLeidas: String = "",
     val portadaUri: Uri? = null,
-    val isEdit: Boolean = false
+    val isEdit: Boolean = false,
+    val isLoading: Boolean = false,
+    val isSaved: Boolean = false
 )

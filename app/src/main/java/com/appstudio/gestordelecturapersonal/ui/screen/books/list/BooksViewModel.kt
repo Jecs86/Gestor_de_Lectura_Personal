@@ -5,14 +5,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appstudio.gestordelecturapersonal.data.local.dao.BookDao
 import com.appstudio.gestordelecturapersonal.data.local.dao.NoteDao
+import com.appstudio.gestordelecturapersonal.data.local.dao.PendingDeleteDao
+import com.appstudio.gestordelecturapersonal.data.local.entity.PendingDeleteEntity
+import com.appstudio.gestordelecturapersonal.data.repository.SyncManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class BooksViewModel(
+    private val pendingDeleteDao: PendingDeleteDao,
     private val bookDao: BookDao,
-    private val noteDao: NoteDao
+    private val noteDao: NoteDao,
+    private val syncManager: SyncManager?
 ) : ViewModel() {
 
     private val _books = MutableStateFlow<List<BookUiModel>>(emptyList())
@@ -41,6 +46,8 @@ class BooksViewModel(
                 id = bookId,
                 timestamp = System.currentTimeMillis()
             )
+            bookDao.markSyncPending(bookId)
+            syncManager?.notifyChange()
             observeBooks()
         }
     }
@@ -56,14 +63,25 @@ class BooksViewModel(
     fun restoreBook(bookId: Long) {
         viewModelScope.launch {
             bookDao.restaurarLibro(bookId, System.currentTimeMillis())
+            bookDao.markSyncPending(bookId)
+            syncManager?.notifyChange()
         }
     }
 
     fun deleteBookForever(bookId: Long) {
         viewModelScope.launch {
+
+            pendingDeleteDao.insert(
+                PendingDeleteEntity(
+                    entityType = "book",
+                    entityId = bookId
+                )
+            )
+
             noteDao.deleteNotesByBook(bookId)
             bookDao.eliminarLibroDefinitivo(bookId)
+
+            syncManager?.notifyChange()
         }
     }
-
 }

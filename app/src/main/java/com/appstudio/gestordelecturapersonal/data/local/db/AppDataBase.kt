@@ -6,17 +6,20 @@ import com.appstudio.gestordelecturapersonal.data.local.dao.AuthorDao
 import com.appstudio.gestordelecturapersonal.data.local.dao.BookDao
 import com.appstudio.gestordelecturapersonal.data.local.dao.GenreDao
 import com.appstudio.gestordelecturapersonal.data.local.dao.NoteDao
+import com.appstudio.gestordelecturapersonal.data.local.dao.PendingDeleteDao
 import com.appstudio.gestordelecturapersonal.data.local.entity.AuthorEntity
 import com.appstudio.gestordelecturapersonal.data.local.entity.BookEntity
 import com.appstudio.gestordelecturapersonal.data.local.entity.GenreEntity
 import com.appstudio.gestordelecturapersonal.data.local.entity.NoteEntity
+import com.appstudio.gestordelecturapersonal.data.local.entity.PendingDeleteEntity
 
 @Database(
     entities = [
         BookEntity::class,
         AuthorEntity::class,
         GenreEntity::class,
-        NoteEntity::class
+        NoteEntity::class,
+        PendingDeleteEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -27,4 +30,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun authorDao(): AuthorDao
     abstract fun genreDao(): GenreDao
     abstract fun noteDao(): NoteDao
+    abstract fun pendingDeleteDao(): PendingDeleteDao
 }

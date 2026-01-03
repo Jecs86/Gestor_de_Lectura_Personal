@@ -18,7 +18,8 @@ fun DropdownSelector(
     items: List<String>,
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
-    onAddNew: ((String) -> Unit)? = null
+    onAddNew: ((String) -> Unit)? = null,
+    enabled: Boolean = true,
 ) {
 
     var expanded by remember { mutableStateOf(false) }
@@ -57,7 +58,8 @@ fun DropdownSelector(
                     onClick = {
                         expanded = false
                         onSelect(index)
-                    }
+                    },
+                    enabled = enabled
                 )
             }
 
@@ -80,7 +82,8 @@ fun DropdownSelector(
                     onClick = {
                         expanded = false
                         showAddDialog = true
-                    }
+                    },
+                    enabled = enabled
                 )
             }
         }

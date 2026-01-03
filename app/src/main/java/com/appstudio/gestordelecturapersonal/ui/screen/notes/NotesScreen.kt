@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
+import com.appstudio.gestordelecturapersonal.data.repository.SyncManager
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
 import com.appstudio.gestordelecturapersonal.ui.navigation.AppRoutes
 
@@ -24,7 +25,8 @@ import com.appstudio.gestordelecturapersonal.ui.navigation.AppRoutes
 fun NotesScreen(
     navController: NavController,
     bookId: Long,
-    onBackPage: () -> Unit
+    onBackPage: () -> Unit,
+    syncManager: SyncManager?
 ) {
 
     val context = LocalContext.current
@@ -35,7 +37,9 @@ fun NotesScreen(
                 val database = DatabaseProvider.getDatabase(context)
                 return NotesViewModel(
                     noteDao = database.noteDao(),
-                    bookId = bookId
+                    bookId = bookId,
+                    pendingDeleteDao = database.pendingDeleteDao(),
+                    syncManager = syncManager
                 ) as T
             }
         }
@@ -81,7 +85,7 @@ fun NotesScreen(
             NotesTrashBottomSheet(
                 notes = viewModel.deletedNotes.collectAsState().value,
                 onRestore = { viewModel.restoreNote(it) },
-                onDeleteForever = { viewModel.deleteNoteForever(it) },
+                onDeleteForever = { viewModel.deleteNoteForever(it, bookId) },
                 onDismiss = { showTrash = false }
             )
         }
