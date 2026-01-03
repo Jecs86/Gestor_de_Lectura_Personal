@@ -92,4 +92,39 @@ interface BookDao {
     @Query("UPDATE books SET syncPending = 0 WHERE id = :bookId")
     suspend fun clearSyncPending(bookId: Long)
 
+    // statistics
+
+    @Query("""
+    SELECT COUNT(*) 
+    FROM books 
+    WHERE uid = :uid AND estaEliminado = 0
+""")
+    suspend fun countTotalBooks(uid: String): Int
+
+    @Query("""
+    SELECT COUNT(*) 
+    FROM books 
+    WHERE uid = :uid 
+      AND estado = 'COMPLETADO'
+      AND estaEliminado = 0
+    """)
+    suspend fun countReadBooks(uid: String): Int
+
+    @Query("""
+    SELECT COUNT(*) 
+    FROM books 
+    WHERE uid = :uid 
+      AND estado != 'COMPLETADO'
+      AND estaEliminado = 0
+    """)
+    suspend fun countPendingBooks(uid: String): Int
+
+    @Query("""
+    SELECT 
+        SUM(paginasLeidas) 
+    FROM books 
+    WHERE uid = :uid AND estaEliminado = 0
+    """)
+    suspend fun sumPagesRead(uid: String): Int?
+
 }

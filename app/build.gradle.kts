@@ -93,4 +93,7 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.androidx.compose.ui.text.google.fonts)
     implementation(libs.coil.compose)
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.core)
 }

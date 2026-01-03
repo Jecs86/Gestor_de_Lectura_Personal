@@ -23,17 +23,17 @@ fun StatisticsCards(
 
         StatCard(
             title = "Libros",
-            value = uiState.totalLibros.toString()
+            value = uiState.totalBooks.toString()
         )
 
         StatCard(
             title = "Leídos",
-            value = uiState.librosLeidos.toString()
+            value = uiState.readBooks.toString()
         )
 
         StatCard(
             title = "En progreso",
-            value = uiState.librosEnProgreso.toString()
+            value = uiState.pendingBooks.toString()
         )
     }
 }

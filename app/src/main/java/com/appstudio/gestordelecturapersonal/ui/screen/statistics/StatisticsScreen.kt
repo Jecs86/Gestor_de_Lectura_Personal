@@ -1,16 +1,29 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.statistics
 
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
 import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
-import com.appstudio.gestordelecturapersonal.ui.component.AppTopBarPreview
 
 @Composable
 fun StatisticsScreen(
     navController: NavController
 ) {
+
+    val context = LocalContext.current
+
+    val database = DatabaseProvider.getDatabase(context)
+
+    val viewModel: StatisticsViewModel = viewModel(
+        factory = StatisticsViewModelFactory(
+            bookDao = database.bookDao()
+        )
+    )
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -20,7 +33,8 @@ fun StatisticsScreen(
         bottomBar = { AppBottomBar(navController) }
     ) { paddingValues ->
         StatisticsContent(
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            viewModel = viewModel
         )
     }
 }

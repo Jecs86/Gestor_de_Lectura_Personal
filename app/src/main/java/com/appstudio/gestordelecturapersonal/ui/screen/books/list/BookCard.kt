@@ -68,7 +68,7 @@ fun BookCard(
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp), // Tamaño discreto
+                                modifier = Modifier.size(24.dp),
                                 strokeWidth = 2.dp,
                                 color = MaterialTheme.colorScheme.primary
                             )

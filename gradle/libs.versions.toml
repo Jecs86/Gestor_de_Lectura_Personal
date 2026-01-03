@@ -21,6 +21,7 @@ googleServices = "4.4.4"
 credentials = "1.2.2"
 androidxComposeFonts = "1.7.0"
 coilCompose = "2.6.0"
+vico = "1.14.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +64,10 @@ androidx-credentials = { group = "androidx.credentials", name = "credentials", v
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 # Coil para Compose
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
+# Vico Charts para Compose
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+vico-core = { group = "com.patrykandpatrick.vico", name = "core", version.ref = "vico" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
