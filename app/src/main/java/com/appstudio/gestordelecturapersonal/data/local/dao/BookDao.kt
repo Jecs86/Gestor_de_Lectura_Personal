@@ -49,4 +49,27 @@ interface BookDao {
         ORDER BY b.fechaCreacion DESC
     """)
     fun obtenerLibrosUi(): Flow<List<BookUiModel>>
+
+    @Query("""
+        SELECT *
+        FROM books b
+        WHERE b.estaEliminado = 1
+        ORDER BY b.fechaActualizacion DESC
+    """)
+    fun obtenerLibrosEliminados(): Flow<List<BookEntity>>
+
+    @Query("""
+        UPDATE books
+        SET estaEliminado = 0,
+            fechaActualizacion = :timestamp
+        WHERE id = :id
+    """)
+    suspend fun restaurarLibro(
+        id: Long,
+        timestamp: Long = System.currentTimeMillis()
+    )
+
+    @Query("DELETE FROM books WHERE id = :id")
+    suspend fun eliminarLibroDefinitivo(id: Long)
+
 }

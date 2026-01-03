@@ -58,4 +58,7 @@ interface NoteDao {
         WHERE id = :noteId
     """)
     suspend fun deleteNoteForever(noteId: Long)
+
+    @Query("DELETE FROM notes WHERE bookId = :bookId")
+    suspend fun deleteNotesByBook(bookId: Long)
 }
