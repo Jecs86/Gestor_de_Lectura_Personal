@@ -6,8 +6,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.appstudio.gestordelecturapersonal.domain.network.ConnectivityState
+import com.appstudio.gestordelecturapersonal.ui.network.ConnectivityViewModel
 
 
 @Composable
@@ -37,14 +42,14 @@ fun SettingsContent(
             )
         }
 
+        SettingsSection(title = "Conectividad") {
+            ConnectivitySettingsSection()
+        }
+
         SettingsSection(title = "Preferencias") {
             SettingsItem(
                 title = "Tema",
                 subtitle = "Claro / Oscuro"
-            )
-            SettingsItem(
-                title = "Idioma",
-                subtitle = "Español"
             )
         }
 

@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
 import com.appstudio.gestordelecturapersonal.data.repository.SyncManager
 import com.appstudio.gestordelecturapersonal.data.repository.SyncRepository
+import com.appstudio.gestordelecturapersonal.domain.network.NetworkMonitor
 import com.appstudio.gestordelecturapersonal.ui.navigation.AppNavHost
 import com.appstudio.gestordelecturapersonal.ui.theme.GestorDeLecturaPersonalTheme
 import com.google.firebase.FirebaseApp
@@ -29,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
         FirebaseApp.initializeApp(this)
 
+
         val database = DatabaseProvider.getDatabase(this)
         val firestore = FirebaseFirestore.getInstance()
 
@@ -41,6 +43,8 @@ class MainActivity : ComponentActivity() {
             syncRepository = syncRepository,
             coroutineScope = lifecycleScope
         )
+
+        NetworkMonitor(this, syncManager).start()
 
         setContent {
             GestorDeLecturaPersonalTheme {

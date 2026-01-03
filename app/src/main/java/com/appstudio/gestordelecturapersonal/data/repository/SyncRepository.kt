@@ -166,29 +166,38 @@ class SyncRepository(
         val pendingDeletes = db.pendingDeleteDao().getAll()
 
         pendingDeletes.forEach { pending ->
+            try {
+                when (pending.entityType) {
 
-            when (pending.entityType) {
+                    "book" -> {
+                        userRef
+                            .collection("books")
+                            .document(pending.entityId.toString())
+                            .delete()
+                            .await()
+                    }
 
-                "book" -> {
-                    userRef
-                        .collection("books")
-                        .document(pending.entityId.toString())
-                        .delete()
-                        .await()
+                    "note" -> {
+                        userRef
+                            .collection("books")
+                            .document(pending.parentId.toString())
+                            .collection("notes")
+                            .document(pending.entityId.toString())
+                            .delete()
+                            .await()
+                    }
                 }
 
-                "note" -> {
-                    userRef
-                        .collection("books")
-                        .document(pending.parentId.toString())
-                        .collection("notes")
-                        .document(pending.entityId.toString())
-                        .delete()
-                        .await()
+                db.pendingDeleteDao().deleteById(pending.id)
+
+            }catch (e: Exception) {
+                Log.e("SYNC", "Error borrando ${pending.entityId}: ${e.message}")
+
+                if (e.message?.contains("NOT_FOUND") == true) {
+                    db.pendingDeleteDao().deleteById(pending.id)
                 }
             }
 
-            db.pendingDeleteDao().deleteById(pending.id)
         }
 
         Log.d("SYNC", "Teminando sincronización deleted para $uid")
