@@ -1,11 +1,15 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.register
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.appstudio.gestordelecturapersonal.ui.component.PasswordTextField
 
 @Composable
 fun RegisterForm(
@@ -25,32 +29,32 @@ fun RegisterForm(
     ) {
 
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = email,
             onValueChange = onEmailChange,
             label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             enabled = !isLoading
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        PasswordTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = password,
             onValueChange = onPasswordChange,
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading
+            label = "Contraseña",
+            enabled = !isLoading,
+            imeAction = ImeAction.Next
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
+        PasswordTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = confirmPassword,
             onValueChange = onConfirmPasswordChange,
-            label = { Text("Confirmar contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
+            label = "Confirmar contraseña",
             enabled = !isLoading
         )
 

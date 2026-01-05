@@ -1,11 +1,14 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.recoverpassword
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
@@ -47,23 +50,25 @@ fun RecoverPasswordScreen(
 
             Column(
                 modifier = Modifier
+                    .fillMaxSize()
                     .padding(paddingValues)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = uiState.email,
                     onValueChange = viewModel::onEmailChange,
                     label = { Text("Correo electrónico") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
                 )
 
                 Button(
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = viewModel::sendPasswordResetEmail,
                     enabled = !uiState.isLoading,
-                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = "Enviar correo")
                 }
