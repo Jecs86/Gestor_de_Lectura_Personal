@@ -81,7 +81,8 @@ fun BooksBarChart(
             valueFormatter = { value, _ -> if (value % 1f == 0f) value.toInt().toString() else "" },
             itemPlacer = AxisItemPlacer.Vertical.default(
                 maxItemCount = if (max_view <= 5) max_view + 1 else 6
-            )
+            ),
+            label = TextComponent.Builder().apply { this.color = textColor }.build()
         ),
         bottomAxis = rememberBottomAxis(
             label = null,

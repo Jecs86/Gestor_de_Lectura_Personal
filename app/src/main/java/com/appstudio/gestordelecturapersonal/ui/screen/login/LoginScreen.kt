@@ -94,7 +94,8 @@ fun LoginScreen(
                         launcher.launch(
                             googleAuthClient.googleSignInClient.signInIntent
                         )
-                    }
+                    },
+                    context = context
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

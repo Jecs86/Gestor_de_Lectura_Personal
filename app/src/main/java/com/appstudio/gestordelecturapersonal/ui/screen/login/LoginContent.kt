@@ -1,5 +1,6 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.login
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,7 +31,8 @@ fun LoginContent(
     onForgotPasswordClick: () -> Unit,
     onGoogleLoginClick: () -> Unit,
     showResendVerification: Boolean,
-    onResendVerificationClick: () -> Unit
+    onResendVerificationClick: () -> Unit,
+    context: Context
 ) {
     Column(
         modifier = Modifier
@@ -39,7 +41,7 @@ fun LoginContent(
         verticalArrangement = Arrangement.Center
     ) {
 
-        LoginHeader()
+        LoginHeader(context)
 
         LoginForm(
             email = email,

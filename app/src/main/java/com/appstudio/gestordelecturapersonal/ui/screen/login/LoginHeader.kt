@@ -1,5 +1,6 @@
 package com.appstudio.gestordelecturapersonal.ui.screen.login
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -25,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import com.appstudio.gestordelecturapersonal.R
 
 @Composable
-fun LoginHeader() {
+fun LoginHeader(
+    context: Context
+) {
 
     Column(
         modifier = Modifier
@@ -44,7 +47,7 @@ fun LoginHeader() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Mis Lecturas",
+            text = context.getString(R.string.app_name),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
