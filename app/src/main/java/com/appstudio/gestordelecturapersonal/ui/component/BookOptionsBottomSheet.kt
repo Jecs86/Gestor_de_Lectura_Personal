@@ -18,7 +18,6 @@ fun BookOptionsBottomSheet(
     onDismiss: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
-    onAddNote: () -> Unit,
     onViewNotes: () -> Unit
 ) {
     ModalBottomSheet(
@@ -43,19 +42,22 @@ fun BookOptionsBottomSheet(
                 error = painterResource(R.drawable.ic_book_placeholder)
             )
 
+            BookCoverImage(
+                url = book.urlPortada,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+            )
+
             Text(
                 text = book.titulo,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge
             )
 
             Divider()
 
             Button(onClick = onEdit, modifier = Modifier.fillMaxWidth()) {
                 Text("✏️ Editar libro")
-            }
-
-            Button(onClick = onAddNote, modifier = Modifier.fillMaxWidth()) {
-                Text("📝 Agregar nota")
             }
 
             Button(onClick = onViewNotes, modifier = Modifier.fillMaxWidth()) {

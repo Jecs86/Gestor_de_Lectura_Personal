@@ -26,13 +26,15 @@ import com.appstudio.gestordelecturapersonal.ui.component.AppBottomBar
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
 import com.appstudio.gestordelecturapersonal.ui.component.BookOptionsBottomSheet
 import com.appstudio.gestordelecturapersonal.ui.component.DeleteDialog
+import com.appstudio.gestordelecturapersonal.ui.component.NotificationType
 import com.appstudio.gestordelecturapersonal.ui.navigation.AppRoutes
 
 
 @Composable
 fun BooksScreen(
     navController: NavController,
-    syncManager: SyncManager?
+    syncManager: SyncManager?,
+    onShowSnackbar: (String, NotificationType) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -111,12 +113,6 @@ fun BooksScreen(
                 onDelete = {
                     showDeleteDialog = true
                 },
-                onAddNote = {
-                    selectedBook = null
-                    navController.navigate(
-                        AppRoutes.AddNote.createRoute(book.id)
-                    )
-                },
                 onViewNotes = {
                     selectedBook = null
                     navController.navigate(
@@ -132,6 +128,9 @@ fun BooksScreen(
                 elementTitle = "Libro",
                 onConfirm = {
                     viewModel.softDeleteBook(selectedBook!!.id)
+
+                    onShowSnackbar("${selectedBook!!.titulo} movido a la papelera", NotificationType.Deleted)
+
                     selectedBook = null
                     showDeleteDialog = false
                 },
@@ -145,8 +144,20 @@ fun BooksScreen(
             BooksTrashBottomSheet(
                 books = deletedBooks,
                 onDismiss = { showTrash = false },
-                onRestore = { viewModel.restoreBook(it) },
-                onDeleteForever = { viewModel.deleteBookForever(it) }
+                onRestore = {
+                    viewModel.restoreBook(it)
+
+                    onShowSnackbar("Libro restaurado con éxito", NotificationType.Online)
+
+                    showTrash = false
+
+                },
+                onDeleteForever = {
+                    viewModel.deleteBookForever(it)
+
+                    onShowSnackbar("Libro eliminado permanentemente", NotificationType.Deleted)
+
+                }
             )
         }
     }

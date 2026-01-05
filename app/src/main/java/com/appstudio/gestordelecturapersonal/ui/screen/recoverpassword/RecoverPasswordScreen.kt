@@ -8,83 +8,82 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
+import com.appstudio.gestordelecturapersonal.ui.component.CustomLoadingOverlay
+import com.appstudio.gestordelecturapersonal.ui.component.NotificationType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecoverPasswordScreen(
     onBackToLogin: () -> Unit,
+    onShowSnackbar: (String, NotificationType) -> Unit,
     viewModel: RecoverPasswordViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Recuperar contraseña") },
-                navigationIcon = {
-                    IconButton(onClick = onBackToLogin) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                }
-            )
+    LaunchedEffect(uiState.errorMessage, uiState.successMessage) {
+        uiState.errorMessage?.let {
+            onShowSnackbar(it, NotificationType.Error)
+            viewModel.clearMessages()
         }
-    ) { paddingValues ->
+        uiState.successMessage?.let {
+            onShowSnackbar(it, NotificationType.Saved)
+            viewModel.clearMessages()
+            onBackToLogin()
+        }
+    }
 
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+    Box(modifier = Modifier.fillMaxSize()){
 
-            OutlinedTextField(
-                value = uiState.email,
-                onValueChange = viewModel::onEmailChange,
-                label = { Text("Correo electrónico") },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
+        Scaffold(
+            topBar = {
+                AppTopBar(
+                    title = "Recuperar contraseña",
+                    needBackPage = true,
+                    onBackPage = onBackToLogin
+                )
+            }
+        ) { paddingValues ->
 
-            Button(
-                onClick = viewModel::sendPasswordResetEmail,
-                enabled = !uiState.isLoading,
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
+
+                OutlinedTextField(
+                    value = uiState.email,
+                    onValueChange = viewModel::onEmailChange,
+                    label = { Text("Correo electrónico") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Button(
+                    onClick = viewModel::sendPasswordResetEmail,
+                    enabled = !uiState.isLoading,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(text = "Enviar correo")
                 }
-            }
 
-            uiState.successMessage?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+                Spacer(modifier = Modifier.height(8.dp))
 
-            uiState.errorMessage?.let {
-                Text(
-                    text = it,
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            TextButton(
-                onClick = onBackToLogin,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Volver al login")
+                TextButton(
+                    onClick = onBackToLogin,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !uiState.isLoading
+                ) {
+                    Text("Volver al login")
+                }
             }
         }
+
+        CustomLoadingOverlay(
+            isLoading = uiState.isLoading,
+            message = "Enviando Solicitud..."
+        )
+
     }
 }

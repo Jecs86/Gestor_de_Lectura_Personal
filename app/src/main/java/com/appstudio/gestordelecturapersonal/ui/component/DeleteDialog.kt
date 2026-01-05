@@ -11,8 +11,15 @@ fun DeleteDialog(
     element: String,
     elementTitle: String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    isPermanent: Boolean = false
 ) {
+
+    val shortElement = if (element.length > 15) element.take(12) + "..." else element
+
+    val message: String = if (isPermanent) "Esta acción eliminará \"$shortElement\" definitivamente."
+                            else "Esta acción enviará \"$shortElement\" a la papelera."
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -20,8 +27,7 @@ fun DeleteDialog(
         },
         text = {
             Text(
-                text = "¿Estás seguro de que deseas eliminar \"$element\"?\n\n" +
-                        "Esta acción enviará $element a la papelera."
+                text = "¿Estás seguro de que deseas eliminar \"$shortElement\"?\n\n$message"
             )
         },
         confirmButton = {

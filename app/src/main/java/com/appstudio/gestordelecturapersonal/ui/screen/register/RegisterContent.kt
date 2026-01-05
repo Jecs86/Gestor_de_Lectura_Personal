@@ -32,14 +32,5 @@ fun RegisterContent(
             onConfirmPasswordChange = onConfirmPasswordChange,
             onRegisterClick = onRegisterClick
         )
-
-        uiState.errorMessage?.let {
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = it,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
-        }
     }
 }

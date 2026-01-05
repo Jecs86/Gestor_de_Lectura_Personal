@@ -192,27 +192,76 @@ class BookFormViewModel(
         _uiState.value = _uiState.value.copy(generoId = id)
     }
 
-    fun updateEstado(value: String) {
-        _uiState.value = _uiState.value.copy(estado = value)
+    fun updateEstado(nuevoEstado: String) {
+
+        val estadoActual = _uiState.value
+        var nuevasPaginasLeidas = estadoActual.paginasLeidas
+
+        when (nuevoEstado) {
+            "PENDIENTE" -> {
+                nuevasPaginasLeidas = "0"
+            }
+            "COMPLETADO" -> {
+                nuevasPaginasLeidas = estadoActual.paginasTotales
+            }
+        }
+
+        _uiState.value = estadoActual.copy(
+            estado = nuevoEstado,
+            paginasLeidas = nuevasPaginasLeidas
+        )
     }
 
     fun updatePaginasTotales(value: String) {
         if (value.all(Char::isDigit)) {
-            _uiState.value = _uiState.value.copy(paginasTotales = value)
+
+            val estadoActual = _uiState.value
+
+            val nuevasPaginasLeidas = if (estadoActual.estado == "COMPLETADO") value
+                                else estadoActual.paginasLeidas
+
+            _uiState.value = estadoActual.copy(
+                paginasTotales = value,
+                paginasLeidas = nuevasPaginasLeidas
+            )
         }
     }
 
     fun updatePaginasLeidas(value: String) {
-        val total = _uiState.value.paginasTotales.toIntOrNull() ?: 0
-        val leidas = value.toIntOrNull() ?: 0
 
-        if (value.all(Char::isDigit) && leidas <= total) {
-            _uiState.value = _uiState.value.copy(paginasLeidas = value)
+        if (_uiState.value.estado == "LEYENDO") {
+            val total = _uiState.value.paginasTotales.toIntOrNull() ?: 0
+            val leidas = value.toIntOrNull() ?: 0
+
+            if (value.all(Char::isDigit) && leidas <= total) {
+                _uiState.value = _uiState.value.copy(paginasLeidas = value)
+            }
         }
+
     }
 
     fun updatePortada(uri: Uri?) {
         _uiState.value = _uiState.value.copy(portadaUri = uri)
+    }
+
+    fun validateAndSave(onValidationError: (String) -> Unit) {
+        val state = _uiState.value
+
+        val errorMsg = when {
+            state.titulo.isBlank() -> "El título no puede estar vacío"
+            state.autorId == null -> "Selecciona un autor"
+            state.generoId == null -> "Selecciona un género"
+            state.paginasTotales.isBlank() || state.paginasTotales.toInt() <= 0 -> "Las páginas totales deben ser mayor a 0"
+            state.paginasLeidas.isBlank() -> "Las páginas leídas no pueden estar vacías"
+            else -> null
+        }
+
+        if (errorMsg != null) {
+            onValidationError(errorMsg)
+            return
+        }
+
+        saveOrUpdateBook()
     }
 
 }

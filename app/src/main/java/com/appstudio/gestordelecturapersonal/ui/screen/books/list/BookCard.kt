@@ -32,6 +32,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.appstudio.gestordelecturapersonal.R
+import com.appstudio.gestordelecturapersonal.ui.component.BookCoverImage
 
 @Composable
 fun BookCard(
@@ -48,44 +49,12 @@ fun BookCard(
         Column(
             modifier = Modifier.padding(12.dp)
         ) {
-
-            SubcomposeAsyncImage(
-                model = book.urlPortada,
-                contentDescription = "Portada del libro",
+            BookCoverImage(
+                url = book.urlPortada,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(140.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.LightGray),
-                contentScale = ContentScale.Crop,
-            ) {
-                val state = painter.state
-
-                when (state) {
-                    is AsyncImagePainter.State.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
-                    is AsyncImagePainter.State.Error -> {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_book_placeholder),
-                            contentDescription = "Error al cargar",
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    else -> {
-                        SubcomposeAsyncImageContent()
-                    }
-                }
-            }
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 

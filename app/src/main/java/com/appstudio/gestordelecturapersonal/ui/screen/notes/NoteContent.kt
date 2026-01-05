@@ -45,7 +45,7 @@ fun NotesContent(
             items(notes) { note ->
                 NoteItem(
                     note = note,
-                    onLongPress = {
+                    onClick = {
                         onEditNote(note.id)
                     },
                     onDoubleClick = {

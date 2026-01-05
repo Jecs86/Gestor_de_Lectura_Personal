@@ -4,9 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.appstudio.gestordelecturapersonal.ui.component.DeleteDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -16,6 +21,10 @@ fun NotesTrashBottomSheet(
     onDeleteForever: (Long) -> Unit,
     onDismiss: () -> Unit
 ) {
+
+    var selectedNote by remember { mutableStateOf<NoteUiModel?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss
     ) {
@@ -47,10 +56,31 @@ fun NotesTrashBottomSheet(
                         TrashNoteItem(
                             note = note,
                             onRestore = { onRestore(note.id) },
-                            onDeleteForever = { onDeleteForever(note.id) }
+                            onDeleteForever = {
+                                selectedNote = note
+                                showDeleteDialog = true
+                            }
                         )
                     }
                 }
+
+                if (showDeleteDialog && selectedNote != null) {
+                    DeleteDialog(
+                        element = selectedNote!!.contenido,
+                        elementTitle = "Nota",
+                        onConfirm = {
+                            onDeleteForever(selectedNote!!.id)
+                            selectedNote = null
+                            showDeleteDialog = false
+                            onDismiss()
+                        },
+                        onDismiss = {
+                            showDeleteDialog = false
+                        },
+                        isPermanent = true
+                    )
+                }
+
             }
 
             Spacer(modifier = Modifier.height(24.dp))
