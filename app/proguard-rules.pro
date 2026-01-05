@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# No ofuscar las clases de tu paquete de datos
+-keepclassmembers class com.appstudio.gestordelecturapersonal.data.** { *; }
+
+# Reglas para Firebase
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn com.google.firebase.**

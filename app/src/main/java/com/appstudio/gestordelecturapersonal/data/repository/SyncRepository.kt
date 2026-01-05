@@ -22,37 +22,42 @@ class SyncRepository(
         Log.d("SYNC", "Iniciando sincronización (firebase - room) para $uid")
 
         withContext(Dispatchers.IO) {
+            try {
+                db.clearAllTables()
 
-            db.clearAllTables()
+                val userRef = firestore.collection("users").document(uid)
 
-            val userRef = firestore.collection("users").document(uid)
-
-            // Authors
-            userRef.collection("authors").get().await().documents.forEach {
-                it.toObject(AuthorEntity::class.java)?.let { author ->
-                    db.authorDao().insertar(author)
-                }
-            }
-
-            // Genres
-            userRef.collection("genres").get().await().documents.forEach {
-                it.toObject(GenreEntity::class.java)?.let { genre ->
-                    db.genreDao().insertar(genre)
-                }
-            }
-
-            // Books + Notes
-            userRef.collection("books").get().await().documents.forEach { bookDoc ->
-                val book = bookDoc.toObject(BookEntity::class.java) ?: return@forEach
-                db.bookDao().insertar(book)
-
-                bookDoc.reference.collection("notes")
-                    .get().await().documents.forEach { noteDoc ->
-                        noteDoc.toObject(NoteEntity::class.java)?.let { note ->
-                            db.noteDao().insertar(note)
-                        }
+                // Authors
+                userRef.collection("authors").get().await().documents.forEach {
+                    it.toObject(AuthorEntity::class.java)?.let { author ->
+                        db.authorDao().insertar(author)
                     }
+                }
+
+                // Genres
+                userRef.collection("genres").get().await().documents.forEach {
+                    it.toObject(GenreEntity::class.java)?.let { genre ->
+                        db.genreDao().insertar(genre)
+                    }
+                }
+
+                // Books + Notes
+                userRef.collection("books").get().await().documents.forEach { bookDoc ->
+                    val book = bookDoc.toObject(BookEntity::class.java) ?: return@forEach
+                    db.bookDao().insertar(book)
+
+                    bookDoc.reference.collection("notes")
+                        .get().await().documents.forEach { noteDoc ->
+                            noteDoc.toObject(NoteEntity::class.java)?.let { note ->
+                                db.noteDao().insertar(note)
+                            }
+                        }
+                }
+            }catch (e: Exception) {
+                Log.e("SYNC", "Error al sincronizar: ${e.message}")
+                e.printStackTrace()
             }
+
         }
         Log.d("SYNC", "terminando sincronización (firebase - room) para $uid")
     }
