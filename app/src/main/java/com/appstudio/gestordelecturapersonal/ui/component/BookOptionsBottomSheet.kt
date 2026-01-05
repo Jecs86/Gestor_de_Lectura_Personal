@@ -31,17 +31,6 @@ fun BookOptionsBottomSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            AsyncImage(
-                model = book.urlPortada,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.ic_book_placeholder),
-                error = painterResource(R.drawable.ic_book_placeholder)
-            )
-
             BookCoverImage(
                 url = book.urlPortada,
                 modifier = Modifier
