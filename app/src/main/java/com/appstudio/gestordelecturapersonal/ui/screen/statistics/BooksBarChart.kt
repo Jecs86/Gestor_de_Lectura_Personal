@@ -11,28 +11,38 @@ import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
 import com.patrykandpatrick.vico.compose.legend.legendItem
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
+import com.patrykandpatrick.vico.core.entry.entryOf
+import com.patrykandpatrick.vico.core.legend.HorizontalLegend
 
 @Composable
 fun BooksBarChart(
     read: Int,
     pending: Int,
-    total: Int
+    total: Int,
 ) {
     if (total == 0) return
 
-    val charEntryModel = entryModelOf(read, pending)
+    val charEntryModel = entryModelOf(
+        listOf(entryOf(0,read)),
+        listOf(entryOf(1, pending))
+    )
+
+    val max_view = if (read >= pending) read else pending
 
     val colorRead = MaterialTheme.colorScheme.primary.toArgb()
-    val colorPending = MaterialTheme.colorScheme.secondary.toArgb()
+    val colorPending = MaterialTheme.colorScheme.tertiary.toArgb()
     val textColor = MaterialTheme.colorScheme.onSurface.toArgb()
 
-    val legend = verticalLegend(
+    val legend = HorizontalLegend(
         items = listOf(
             legendItem(
                 icon = ShapeComponent(shape = Shapes.pillShape, color = colorRead),
@@ -45,28 +55,42 @@ fun BooksBarChart(
                 labelText = "Pendientes"
             )
         ),
-        iconSize = 10.dp,
-        iconPadding = 8.dp,
-        spacing = 4.dp,
-        padding = MutableDimensions(8f, 8f)
+        iconSizeDp = 10.dp.value,
+        iconPaddingDp = 2.dp.value,
+        spacingDp = 24.dp.value,
+        padding = MutableDimensions(16f, 0f)
     )
 
-    Column(
+    Chart(
+        chart = columnChart(
+            columns = listOf(
+                LineComponent(
+                    color = colorRead,
+                    thicknessDp = 16f,
+                    shape = Shapes.roundedCornerShape(4.dp)
+                ),
+                LineComponent(
+                    color = colorPending,
+                    thicknessDp = 16f,
+                    shape = Shapes.roundedCornerShape(4.dp)
+                )
+            )
+        ),
+        model = charEntryModel,
+        startAxis = rememberStartAxis(
+            valueFormatter = { value, _ -> if (value % 1f == 0f) value.toInt().toString() else "" },
+            itemPlacer = AxisItemPlacer.Vertical.default(
+                maxItemCount = if (max_view <= 5) max_view + 1 else 6
+            )
+        ),
+        bottomAxis = rememberBottomAxis(
+            label = null,
+            tick = null,
+            guideline = null
+        ),
+        legend = legend,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Chart(
-            chart = columnChart(),
-            model = charEntryModel,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
-            legend = legend,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-    }
+            .height(200.dp)
+    )
 }
