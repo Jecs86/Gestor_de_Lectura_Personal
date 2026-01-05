@@ -8,14 +8,20 @@ import com.appstudio.gestordelecturapersonal.data.repository.SyncRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SettingsViewModel(
     private val database: AppDatabase,
-    private val syncRepository: SyncRepository
+    private val syncRepository: SyncRepository,
+    private val themePrefs: ThemePreferences
 ) : ViewModel() {
+
+    val themeMode: StateFlow<ThemeMode> = themePrefs.themeMode
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemeMode.SYSTEM)
 
     private val auth = FirebaseAuth.getInstance()
 
@@ -23,6 +29,12 @@ class SettingsViewModel(
         SettingsUiState(email = auth.currentUser?.email)
     )
     val uiState: StateFlow<SettingsUiState> = _uiState
+
+    fun setTheme(mode: ThemeMode) {
+        viewModelScope.launch {
+            themePrefs.saveThemeMode(mode)
+        }
+    }
 
     fun logout() {
         viewModelScope.launch (Dispatchers.IO) {

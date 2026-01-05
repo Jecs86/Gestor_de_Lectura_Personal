@@ -44,6 +44,9 @@ import com.appstudio.gestordelecturapersonal.ui.screen.notes.form.NoteFormScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.recoverpassword.RecoverPasswordScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.register.RegisterScreen
 import com.appstudio.gestordelecturapersonal.ui.screen.settings.SettingsScreen
+import com.appstudio.gestordelecturapersonal.ui.screen.settings.SettingsViewModel
+import com.appstudio.gestordelecturapersonal.ui.screen.settings.SettingsViewModelFactory
+import com.appstudio.gestordelecturapersonal.ui.screen.settings.ThemePreferences
 import com.appstudio.gestordelecturapersonal.ui.screen.statistics.StatisticsScreen
 import com.appstudio.gestordelecturapersonal.ui.sync.SyncViewModel
 import kotlinx.coroutines.launch
@@ -53,7 +56,8 @@ import kotlinx.coroutines.launch
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
     syncManager: SyncManager? = null,
-    authGateViewModel: AuthGateViewModel
+    authGateViewModel: AuthGateViewModel,
+    themePrefs: ThemePreferences
 ) {
 
     val syncViewModel: SyncViewModel = viewModel()
@@ -271,6 +275,7 @@ fun AppNavHost(
 
                 // ---------- SETTINGS ----------
                 composable(AppRoutes.Settings.route) {
+
                     SettingsScreen(
                         navController = navController,
                         onLogoutSuccess = {
@@ -278,7 +283,9 @@ fun AppNavHost(
                                 popUpTo(0)
                                 launchSingleTop = true
                             }
-                        }
+                        },
+                        onSnackbarShow = showMsg,
+                        themePrefs = themePrefs
                     )
                 }
             }

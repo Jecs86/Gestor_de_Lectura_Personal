@@ -5,11 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +24,8 @@ import com.appstudio.gestordelecturapersonal.data.repository.SyncRepository
 import com.appstudio.gestordelecturapersonal.domain.network.NetworkMonitor
 import com.appstudio.gestordelecturapersonal.ui.navigation.AppNavHost
 import com.appstudio.gestordelecturapersonal.ui.screen.auth.AuthGateViewModel
+import com.appstudio.gestordelecturapersonal.ui.screen.settings.ThemeMode
+import com.appstudio.gestordelecturapersonal.ui.screen.settings.ThemePreferences
 import com.appstudio.gestordelecturapersonal.ui.theme.GestorDeLecturaPersonalTheme
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +36,8 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val themePrefs = ThemePreferences(this)
 
         FirebaseApp.initializeApp(this)
 
@@ -55,10 +62,20 @@ class MainActivity : ComponentActivity() {
         NetworkMonitor(this, syncManager).start()
 
         setContent {
-            GestorDeLecturaPersonalTheme {
+
+            val themeMode by themePrefs.themeMode.collectAsState(initial = ThemeMode.SYSTEM)
+
+            val useDarkTheme = when (themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }
+
+            GestorDeLecturaPersonalTheme(darkTheme = useDarkTheme) {
                 AppNavHost(
                     syncManager = syncManager,
-                    authGateViewModel = authGateViewModel
+                    authGateViewModel = authGateViewModel,
+                    themePrefs = themePrefs
                 )
             }
         }

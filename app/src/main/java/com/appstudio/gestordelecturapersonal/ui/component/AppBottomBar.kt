@@ -23,14 +23,14 @@ fun AppBottomBar(
 
     val items = listOf(
         BottomNavItem(
-            route = AppRoutes.Books.route,
-            label = "Libros",
-            icon = Icons.Default.Book
-        ),
-        BottomNavItem(
             route = AppRoutes.Statistics.route,
             label = "Estadísticas",
             icon = Icons.Default.BarChart
+        ),
+        BottomNavItem(
+            route = AppRoutes.Books.route,
+            label = "Libros",
+            icon = Icons.Default.Book
         ),
         BottomNavItem(
             route = AppRoutes.Settings.route,

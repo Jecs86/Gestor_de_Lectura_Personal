@@ -10,12 +10,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.appstudio.gestordelecturapersonal.data.local.db.DatabaseProvider
 import com.appstudio.gestordelecturapersonal.data.repository.SyncRepository
 import com.appstudio.gestordelecturapersonal.ui.component.AppTopBar
+import com.appstudio.gestordelecturapersonal.ui.component.NotificationType
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun SettingsScreen(
     navController: NavController,
-    onLogoutSuccess: () -> Unit
+    onLogoutSuccess: () -> Unit,
+    onSnackbarShow: (String, NotificationType) -> Unit,
+    themePrefs: ThemePreferences
 ) {
 
     val context = LocalContext.current
@@ -24,13 +27,16 @@ fun SettingsScreen(
     val viewModel: SettingsViewModel = viewModel(
         factory = SettingsViewModelFactory(
             database = database,
-            syncRepository = SyncRepository(database, FirebaseFirestore.getInstance())
+            syncRepository = SyncRepository(database, FirebaseFirestore.getInstance()),
+            themPrefs = themePrefs
         )
     )
     val uiState by viewModel.uiState.collectAsState()
+    val currentTheme by viewModel.themeMode.collectAsState()
 
     LaunchedEffect(uiState.isLoggedOut) {
         if (uiState.isLoggedOut) {
+            onSnackbarShow("Sesión cerrada", NotificationType.Success)
             onLogoutSuccess()
         }
     }
@@ -48,7 +54,10 @@ fun SettingsScreen(
         SettingsContent(
             paddingValues = paddingValues,
             email = uiState.email,
-            onLogoutClick = viewModel::logout
+            onLogoutClick = viewModel::logout,
+            themeMode = currentTheme,
+            onThemeChange = viewModel::setTheme,
+            context = context
         )
     }
 }

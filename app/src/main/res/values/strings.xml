@@ -3,4 +3,7 @@
     <string name="default_web_client_id">
         966552316534-m6kil4n0h2k9n7oohl6sufe20e2s2toh.apps.googleusercontent.com
     </string>
+    <string name="version_app">
+        1.0
+    </string>
 </resources>
